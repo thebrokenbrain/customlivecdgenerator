@@ -26,3 +26,15 @@
       loop_control:
         loop_var: vm
       tags: destroy_vm
+
+    # ansible-playbook main.yml --tags download_iso
+    - name: Get ubuntu server iso file
+      ansible.builtin.include_tasks:
+        file: playbooks/download_iso.yml
+        apply:
+          tags: download_iso
+      vars:
+        iso_url: https://releases.ubuntu.com/22.04.3/ubuntu-22.04.3-live-server-amd64.iso
+        filename: ubuntu.iso
+        sha256: a4acfda10b18da50e2ec50ccaf860d7f20b389df8765611142305c0e911d16fd
+      tags: download_iso

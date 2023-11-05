@@ -1,0 +1,7 @@
+---
+- name: Download iso "{{ iso_url  }}"
+  ansible.builtin.get_url:
+    url: "{{ iso_url }}"
+    dest: tmp/iso/{{ filename }}
+    mode: 0755
+    checksum: sha256:{{ sha256 }}
