@@ -1,0 +1,7 @@
+---
+- name: Destroy VirtualBox VM
+  ansible.builtin.command:
+    cmd: VBoxManage unregistervm "{{ vm }}" --delete
+  register: destroy_vm_output
+  changed_when: destroy_vm_output.rc != 1
+  ignore_errors: true

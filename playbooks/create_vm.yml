@@ -1,0 +1,35 @@
+---
+- name: Create a VirtualBox VM
+  ansible.builtin.command:
+    cmd: VBoxManage createvm --name "{{ vm }}" --ostype "Ubuntu_64" --register
+  register: create_vm_output
+  changed_when: create_vm_output.rc != 1
+  ignore_errors: true
+
+- name: Set/Override default values where necessary
+  ansible.builtin.command:
+    cmd: VBoxManage modifyvm "{{ vm }}" --memory 4096 --cpus 4 --graphicscontroller vmsvga --vram 128
+  register: override_default_values_vm_output
+  changed_when: override_default_values_vm_output.rc != 1
+  ignore_errors: true
+
+- name: Create the SATA storage controller
+  ansible.builtin.command:
+    cmd: VBoxManage storagectl "{{ vm }}" --name "SATA" --add sata --bootable on --hostiocache off
+  register: create_sata_controller_output
+  changed_when: create_sata_controller_output.rc != 1
+  ignore_errors: true
+
+- name: Create a new disk to the guest VM
+  ansible.builtin.command:
+    cmd: VBoxManage createmedium disk --filename "tmp/disks/{{ vm }}.vdi" --size 40000 --variant Standard
+  register: create_disk_output
+  changed_when: create_disk_output.rc != 1
+  ignore_errors: true
+
+- name: Attach the disk to the SATA controller
+  ansible.builtin.command:
+    cmd: VBoxManage storageattach "{{ vm }}" --storagectl "SATA" --port 0 --device 0 --type hdd --medium "tmp/disks/{{ vm }}.vdi"
+  register: attach_disk_output
+  changed_when: attach_disk_output.rc != 1
+  ignore_errors: true

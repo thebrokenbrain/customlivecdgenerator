@@ -1,0 +1,28 @@
+---
+- name: Main Playbook
+  hosts: localhost
+
+  tasks:
+    # ansible-playbook main.yml --tags create_vm
+    - name: Create VirtualBox VM
+      ansible.builtin.include_tasks:
+        file: playbooks/create_vm.yml
+        apply:
+          tags: create_vm
+      loop:
+        - vm1
+      loop_control:
+        loop_var: vm
+      tags: create_vm
+
+    # ansible-playbook main.yml --tags destroy_vm
+    - name: Destroy VirtualBox VM
+      ansible.builtin.include_tasks:
+        file: playbooks/destroy_vm.yml
+        apply:
+          tags: destroy_vm
+      loop:
+        - vm1
+      loop_control:
+        loop_var: vm
+      tags: destroy_vm
